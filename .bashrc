@@ -35,15 +35,15 @@ function help    { grep.exe '^function [^_]' ~/.bashrc ; return $? ; } # list al
 function r       { builtin source            ~/.bashrc ; return $? ; } # reload bashrc
 function bashrc  { npp                       ~/.bashrc ; return $? ; } # open bashrc
 
-function clone   { git.exe clone $GITHUB/$1.git $1  ; return $? ; }
-function add     { git.exe add                 "$@" ; return $? ; }
-function b       { bn "$1" ; bu "$1"                ; return $? ; }
-function bn      { git.exe branch -m            $1  ; return $? ; }
-function bu      { git.exe branch -u     origin/$1  ; return $? ; }
-function cmm     { git.exe commit -m           "$1" ; return $? ; }
-function k       { _bg gitk.exe --all               ; return $? ; }
-function rs      { git.exe reset               "$@" ; return $? ; }
-function s       { git.exe status              "$@" ; return $? ; }
+function clone   { git.exe clone $GITHUB/$1.git ${@:2} ; return $? ; }
+function add     { git.exe add                    "$@" ; return $? ; }
+function b       { bn "$1" ; bu "$1"                   ; return $? ; }
+function bn      { git.exe branch -m               $1  ; return $? ; }
+function bu      { git.exe branch -u        origin/$1  ; return $? ; }
+function cmm     { git.exe commit -m              "$1" ; return $? ; }
+function k       { _bg gitk.exe --all                  ; return $? ; }
+function rs      { git.exe reset                  "$@" ; return $? ; }
+function s       { git.exe status                 "$@" ; return $? ; }
 
 function xcode   { open.exe -a Xcode                ; return $? ; }
 function xcode.common # add the Xcode content that shouldn't change
