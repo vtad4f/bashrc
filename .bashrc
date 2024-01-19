@@ -5,7 +5,7 @@
 ################################################################################
 
 # Is Mac?
-if uname.exe | grep.exe Darwin > /dev/null ; then
+if uname | grep Darwin > /dev/null ; then
    
    # Start by setting up all the user-specific content
    GITDIR="$HOME/Desktop/git"
@@ -23,29 +23,29 @@ FALSE_=3
 
 function _bg    { ("$@" &) ; return $? ; }
 
-function ext     { find.exe . -type f -name '*.*' | sed.exe 's|.*\.||' | sort.exe -u ; return $? ; } # list file extensions
-function npp.new { notepad++ -multiInst -noPlugin -nosession "$@" ; return $? ; } # open temp npp instance
+function ext     { find . -type f -name '*.*' | sed 's|.*\.||' | sort -u ; return $? ; } # list file extensions
+function npp.new { notepad++ -multiInst -noPlugin -nosession "$@"        ; return $? ; } # open temp npp instance
 
 function npp     { _bg notepad++ "$@" ; return $? ; } # open npp in bg
 function editor  { _bg npp.new        ; return $? ; } # open temp npp instance in bg
-function ex      { explorer.exe .     ; return $? ; } # open explorer
+function ex      { explorer .         ; return $? ; } # open explorer
 function root    { builtin cd $GITDIR ; return $? ; } # navigate to the git dir
 
-function help    { grep.exe '^function [^_]' ~/.bashrc ; return $? ; } # list all fcns
-function r       { builtin source            ~/.bashrc ; return $? ; } # reload bashrc
-function bashrc  { npp                       ~/.bashrc ; return $? ; } # open bashrc
+function help    { grep '^function [^_]' ~/.bashrc ; return $? ; } # list all fcns
+function r       { builtin source        ~/.bashrc ; return $? ; } # reload bashrc
+function bashrc  { npp                   ~/.bashrc ; return $? ; } # open bashrc
 
-function clone   { git.exe clone $GITHUB/$1.git ${@:2} ; return $? ; }
-function add     { git.exe add                    "$@" ; return $? ; }
-function b       { bn "$1" ; bu "$1"                   ; return $? ; }
-function bn      { git.exe branch -m               $1  ; return $? ; }
-function bu      { git.exe branch -u        origin/$1  ; return $? ; }
-function cmm     { git.exe commit -m              "$1" ; return $? ; }
-function k       { _bg gitk.exe --all                  ; return $? ; }
-function rs      { git.exe reset                  "$@" ; return $? ; }
-function s       { git.exe status                 "$@" ; return $? ; }
+function clone   { git clone $GITHUB/$1.git ${@:2} ; return $? ; }
+function add     { git add                    "$@" ; return $? ; }
+function b       { bn "$1" ; bu "$1"               ; return $? ; }
+function bn      { git branch -m               $1  ; return $? ; }
+function bu      { git branch -u        origin/$1  ; return $? ; }
+function cmm     { git commit -m              "$1" ; return $? ; }
+function k       { _bg gitk --all                  ; return $? ; }
+function rs      { git reset                  "$@" ; return $? ; }
+function s       { git status                 "$@" ; return $? ; }
 
-function xcode   { open.exe -a Xcode                ; return $? ; }
+function xcode   { open -a Xcode                   ; return $? ; }
 function xcode.common # add the Xcode content that shouldn't change
 {
    add xcode/Classes                     \
@@ -78,7 +78,7 @@ function temp         # dump output to a temp file and open it
    ret_=$?
    
    npp.new $file_
-   rm.exe $file_
+   rm $file_
    return $ret_
 }
 
