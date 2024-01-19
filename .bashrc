@@ -10,8 +10,8 @@ if uname | grep Darwin > /dev/null ; then
    # Start by setting up all the user-specific content
    GITDIR="$HOME/Desktop/git"
    
-   export DOTNET_ROOT="$HOME/Desktop/dotnet"
-   export PATH="$DOTNET_ROOT:$PATH"
+   #export DOTNET_ROOT="$HOME/Desktop/dotnet"
+   #export PATH="$DOTNET_ROOT:$PATH"
 else
    GITDIR=C:/git
 fi
