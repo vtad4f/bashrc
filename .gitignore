@@ -1,0 +1,8 @@
+
+# Windows user folder content
+ntuser*
+*/
+
+# Bash files specific to each user
+.bash_history
+.gitconfig
