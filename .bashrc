@@ -7,13 +7,9 @@
 # Is Mac?
 if uname | grep Darwin > /dev/null ; then
    
-   # Start by setting up all the user-specific content
    GITDIR="$HOME/Desktop/git"
-   
-   #export DOTNET_ROOT="$HOME/Desktop/dotnet"
-   #export PATH="$DOTNET_ROOT:$PATH"
 else
-   GITDIR=C:/git
+   GITDIR=/c/git
 fi
 GITHUB=https://github.com/vtad4f
 
@@ -35,15 +31,17 @@ function help    { grep '^function [^_]' ~/.bashrc ; return $? ; } # list all fc
 function r       { builtin source        ~/.bashrc ; return $? ; } # reload bashrc
 function bashrc  { npp                   ~/.bashrc ; return $? ; } # open bashrc
 
-function clone   { git clone $GITHUB/$1.git ${@:2} ; return $? ; }
-function add     { git add                    "$@" ; return $? ; }
-function b       { bn "$1" ; bu "$1"               ; return $? ; }
-function bn      { git branch -m               $1  ; return $? ; }
-function bu      { git branch -u        origin/$1  ; return $? ; }
-function cmm     { git commit -m              "$1" ; return $? ; }
-function k       { _bg gitk --all                  ; return $? ; }
-function rs      { git reset                  "$@" ; return $? ; }
-function s       { git status                 "$@" ; return $? ; }
+function clone   { git clone $GITHUB/$1.git ${@:2} ; return $? ; } 
+function add     { git add                    "$@" ; return $? ; } 
+function b       { bn "$1" ; bu "$1"               ; return $? ; } # change branch name and upstream
+function bn      { git branch -m               $1  ; return $? ; } # change branch name
+function bu      { git branch -u        origin/$1  ; return $? ; } # change branch upstream
+function cmm     { git commit -m              "$1" ; return $? ; } # commit with msg
+function f       { git fetch -p               "$@" ; return $? ; } # fetch (prune deleted branches)
+function k       { _bg gitk --all                  ; return $? ; } # gitk
+function rs      { git reset                  "$@" ; return $? ; } 
+function s       { git status                 "$@" ; return $? ; } 
+function pull    { git pull ; git lfs pull         ; return $? ; } # fetch and rebase + git lfs files
 
 function xcode   { open -a Xcode                   ; return $? ; }
 function xcode.common # add the Xcode content that shouldn't change
