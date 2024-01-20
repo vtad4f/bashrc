@@ -42,7 +42,7 @@ function f       { git fetch -p               "$@" ; return $? ; } # fetch (prun
 function k       { _bg gitk --all                  ; return $? ; } # gitk
 function rs      { git reset                  "$@" ; return $? ; } # reset
 function s       { git status                 "$@" ; return $? ; } # status
-function pull    { git pull ; git lfs pull         ; return $? ; } # fetch and rebase + git lfs files
+function pull    { git pull && git lfs pull        ; return $? ; } # fetch and rebase (+git lfs files)
 
 function xcode   { open -a Xcode                   ; return $? ; }
 function xcode.common # add the Xcode content that shouldn't change
