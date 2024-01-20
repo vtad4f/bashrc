@@ -31,16 +31,17 @@ function help    { grep '^function [^_]' ~/.bashrc ; return $? ; } # list all fc
 function r       { builtin source        ~/.bashrc ; return $? ; } # reload bashrc
 function bashrc  { npp                   ~/.bashrc ; return $? ; } # open bashrc
 
-function clone   { git clone $GITHUB/$1.git ${@:2} ; return $? ; } 
-function add     { git add                    "$@" ; return $? ; } 
+function clone   { git clone $GITHUB/$1.git ${@:2} ; return $? ; } # clone
+function add     { git add                    "$@" ; return $? ; } # add
 function b       { bn "$1" ; bu "$1"               ; return $? ; } # change branch name and upstream
 function bn      { git branch -m               $1  ; return $? ; } # change branch name
 function bu      { git branch -u        origin/$1  ; return $? ; } # change branch upstream
+function ch      { git checkout              "$@"  ; return $? ; } # checkout
 function cmm     { git commit -m              "$1" ; return $? ; } # commit with msg
 function f       { git fetch -p               "$@" ; return $? ; } # fetch (prune deleted branches)
 function k       { _bg gitk --all                  ; return $? ; } # gitk
-function rs      { git reset                  "$@" ; return $? ; } 
-function s       { git status                 "$@" ; return $? ; } 
+function rs      { git reset                  "$@" ; return $? ; } # reset
+function s       { git status                 "$@" ; return $? ; } # status
 function pull    { git pull ; git lfs pull         ; return $? ; } # fetch and rebase + git lfs files
 
 function xcode   { open -a Xcode                   ; return $? ; }
