@@ -3,6 +3,11 @@
 ntuser*
 */
 
+# Mac user folder content
+.CFUserTextEncoding
+.DS_Store
+.zsh_history
+
 # Bash files specific to each user
 .bash_history
 .gitconfig
