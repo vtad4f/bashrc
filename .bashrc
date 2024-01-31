@@ -18,7 +18,7 @@ GITHUB=https://github.com/vtad4f
 TRUE_=0
 FALSE_=3
 
-function _bg    { ("$@" &) ; return $? ; }
+function _bg     { ("$@" &) ; return $? ; }
 
 function ext     { find . -type f -name '*.*' | sed 's|.*\.||' | sort -u ; return $? ; } # list file extensions
 function npp.new { notepad++ -multiInst -noPlugin -nosession "$@"        ; return $? ; } # open temp npp instance
@@ -60,6 +60,27 @@ function amm
 
 }
 
+function unity.init   # assumes specific folder structure
+{
+   [[ "$(pwd)" != $GITDIR/* ]] && echo 'A unity project should be in the git folder!' && return $FALSE_
+   [[ -d '.git' ]] && echo 'Remove the .git directory before overwriting the state of this repo!' && return $FALSE_
+   
+   cp -r $GITDIR/_unity/project/. .
+   
+   echo
+   echo "Run the following Windows cmds:"
+   echo "  mklink /J build $WIN_GITDIR\\_unity\\build"
+   echo "  cd Assets"
+   echo "  mklink /J Scripts $WIN_GITDIR\\_unity\\scripts"
+   echo "  exit"
+   cmd
+   
+   cd build
+   echo "Now checkout an existing project branch or create/push a new one"
+   
+   return $?
+}
+
 function temp         # dump output to a temp file and open it
 {
    local ret_
@@ -95,27 +116,6 @@ function xcode.unique # add the Xcode content that's different between projects
        xcode/Il2CppOutputProject/Source  \
        xcode/Unity-iPhone.xcodeproj/project.pbxproj \
        xcode/Info.plist
-}
-
-function unity.init   # assumes specific folder structure
-{
-   [ "$(pwd)" != $GITDIR/* ] && echo "A unity project should be in the git folder!" && return $FALSE_
-   [ -d .git ] && echo 'Remove the .git directory before overwriting the state of this repo!' && return $FALSE_
-   
-   cp -r $GITDIR/_unity/project/. .
-   
-   echo
-   echo "Run the following Windows cmds:"
-   echo "  mklink /J build $WIN_GITDIR\\_unity\\build"
-   echo "  cd Assets"
-   echo "  mklink /J Scripts $WIN_GITDIR\\_unity\\scripts"
-   echo "  exit"
-   cmd
-   
-   cd build
-   echo "Now checkout an existing project branch or create/push a new one"
-   
-   return $?
 }
 
 if [[ "$(pwd)" == "$HOME" ]]; then
