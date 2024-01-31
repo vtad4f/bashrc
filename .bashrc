@@ -79,8 +79,10 @@ function unity.init   # copy the files from the unity project repo, then create 
 
 function unity.erase  # erase some of the files copied from the unity project repo
 {
-   [[ ! -d '.git' ]] && echo 'Remove the .git directory before overwriting the state of this repo!' && return $FALSE_
+   [[ ! -d '.git' ]] && echo "Nothing to erase... This isn't a repo!" && return $FALSE_
    rm -rf .git
+   rm -rf Assets/Scripts
+   rm -rf build
    rm .gitignore
    rm README.md
 }
