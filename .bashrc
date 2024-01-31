@@ -7,12 +7,13 @@
 # Is Mac?
 if uname | grep Darwin > /dev/null ; then
    
-   GITDIR="$HOME/Desktop/git"
+    GITDIR="$HOME/Desktop/git"
 else
-   GITDIR=/c/git
+    GITDIR=/c/git
+WIN_GITDIR=C:\\git
 fi
-GITHUB=https://github.com/vtad4f
 
+GITHUB=https://github.com/vtad4f
 
 TRUE_=0
 FALSE_=3
@@ -32,19 +33,48 @@ function r       { builtin source        ~/.bashrc ; return $? ; } # reload bash
 function bashrc  { npp                   ~/.bashrc ; return $? ; } # open bashrc
 
 function clone   { git clone $GITHUB/$1.git ${@:2} ; return $? ; } # clone
-function add     { git add                    "$@" ; return $? ; } # add
-function b       { bn "$1" ; bu "$1"               ; return $? ; } # change branch name and upstream
-function bn      { git branch -m               $1  ; return $? ; } # change branch name
-function bu      { git branch -u        origin/$1  ; return $? ; } # change branch upstream
-function ch      { git checkout              "$@"  ; return $? ; } # checkout
-function cmm     { git commit -m              "$1" ; return $? ; } # commit with msg
-function f       { git fetch -p               "$@" ; return $? ; } # fetch (prune deleted branches)
+function add     { git add                  "$@"   ; return $? ; } # add
+function bd      { git branch -d             $1    ; return $? ; } # delete local branch
+function bl      { git branch -vv                  ; return $? ; } # list local branches
+function br      { git branch -r                   ; return $? ; } # list remote branches
+function bn      { git branch -m             $1    ; return $? ; } # change branch name
+function bu      { git branch -u      origin/$1    ; return $? ; } # change branch upstream
+function bun     { bu "$1" ; bn "$1"               ; return $? ; } # change branch upstream and name
+function ch      { git checkout             "$@"   ; return $? ; } # checkout
+function chm     { git checkout main               ; return $? ; } # checkout main branch
+function cmm     { git commit -m            "$1"   ; return $? ; } # commit with msg
+function f       { git fetch -p             "$@"   ; return $? ; } # fetch (prune deleted branches)
 function k       { _bg gitk --all                  ; return $? ; } # gitk
-function rs      { git reset                  "$@" ; return $? ; } # reset
-function s       { git status                 "$@" ; return $? ; } # status
+function rs      { git reset                "$@"   ; return $? ; } # reset
+function s       { git status               "$@"   ; return $? ; } # status
 function pull    { git pull && git lfs pull        ; return $? ; } # fetch and rebase (+git lfs files)
 
-function xcode   { open -a Xcode                   ; return $? ; }
+function su      { git submodule update --init --recursive ; return $? ; } # submodule update
+
+function amm
+{
+   local msg_
+   msg_="$1"
+   [ -z "$msg_" ] && msg_=--no-edit
+   git commit --amend "$msg_"
+
+}
+
+function temp         # dump output to a temp file and open it
+{
+   local ret_
+   local file_
+   file_=temp.txt
+   
+   "$@" > $file_
+   ret_=$?
+   
+   npp.new $file_
+   rm $file_
+   return $ret_
+}
+
+function xcode   { open -a Xcode ; return $? ; }
 function xcode.common # add the Xcode content that shouldn't change
 {
    add xcode/Classes                     \
@@ -67,20 +97,26 @@ function xcode.unique # add the Xcode content that's different between projects
        xcode/Info.plist
 }
 
-function temp         # dump output to a temp file and open it
+function unity.init   # assumes specific folder structure
 {
-   local ret_
-   local file_
-   file_=temp.txt
+   [ "$(pwd)" != $GITDIR/* ] && echo "A unity project should be in the git folder!" && return $FALSE_
+   [ -d .git ] && echo 'Remove the .git directory before overwriting the state of this repo!' && return $FALSE_
    
-   "$@" > $file_
-   ret_=$?
+   cp -r $GITDIR/_unity/project/. .
    
-   npp.new $file_
-   rm $file_
-   return $ret_
+   echo
+   echo "Run the following Windows cmds:"
+   echo "  mklink /J build $WIN_GITDIR\\_unity\\build"
+   echo "  cd Assets"
+   echo "  mklink /J Scripts $WIN_GITDIR\\_unity\\scripts"
+   echo "  exit"
+   cmd
+   
+   cd build
+   echo "Now checkout an existing project branch or create/push a new one"
+   
+   return $?
 }
-
 
 if [[ "$(pwd)" == "$HOME" ]]; then
    root
