@@ -32,25 +32,28 @@ function help    { grep '^function [^_]' ~/.bashrc ; return $? ; } # list all fc
 function r       { source                ~/.bashrc ; return $? ; } # reload bashrc
 function bashrc  { npp                   ~/.bashrc ; return $? ; } # open bashrc
 
-function root    { cd $GITDIR                      ; return $? ; } # navigate to the git dir
-function clone   { git clone $GITHUB/$1.git ${@:2} ; return $? ; } # clone
-function add     { git add                  "$@"   ; return $? ; } # add
-function bd      { git branch -d             $1    ; return $? ; } # delete local branch
-function bl      { git branch -vv                  ; return $? ; } # list local branches
-function br      { git branch -r                   ; return $? ; } # list remote branches
-function bn      { git branch -m             $1    ; return $? ; } # change branch name
-function bu      { git branch -u      origin/$1    ; return $? ; } # change branch upstream
-function bun     { bu "$1" ; bn "$1"               ; return $? ; } # change branch upstream and name
-function ch      { git checkout             "$@"   ; return $? ; } # checkout
-function chm     { git checkout main               ; return $? ; } # checkout main branch
-function cmm     { git commit -m            "$1"   ; return $? ; } # commit with msg
-function f       { git fetch -p             "$@"   ; return $? ; } # fetch (prune deleted branches)
-function k       { _bg gitk --all                  ; return $? ; } # gitk
-function rs      { git reset                "$@"   ; return $? ; } # reset
-function s       { git status               "$@"   ; return $? ; } # status
-function pull    { git pull && git lfs pull        ; return $? ; } # fetch and rebase (+git lfs files)
-
-function su      { git submodule update --init --recursive ; return $? ; } # submodule update
+function root    { cd $GITDIR                       ; return $? ; } # navigate to the git dir
+function clone   { git clone $GITHUB/$1.git ${@:2}  ; return $? ; } # clone
+function add     { git add                  "$@"    ; return $? ; } # add
+function bd      { git branch -d             $1     ; return $? ; } # delete local branch
+function bl      { git branch -vv                   ; return $? ; } # list local branches
+function br      { git branch -r                    ; return $? ; } # list remote branches
+function bn      { git branch -m             $1     ; return $? ; } # change branch name
+function bu      { git branch -u      origin/$1     ; return $? ; } # change branch upstream
+function bun     { bu "$1" ; bn "$1"                ; return $? ; } # change branch upstream and name
+function clean   { git clean -dfqx          "$@"    ; return $? ; } # clean untracked files
+function ch      { git checkout             "$@"    ; return $? ; } # checkout
+function chm     { git checkout -B main origin/main ; return $? ; } # checkout main branch
+function cmm     { git commit -m            "$1"    ; return $? ; } # commit with msg
+function f       { git fetch -p             "$@"    ; return $? ; } # fetch (prune deleted branches)
+function k       { f ; _bg gitk --all               ; return $? ; } # gitk
+function rb      { git rebase               "$@"    ; return $? ; } # rebase
+function rbi     { git rebase -i            "$@"    ; return $? ; } # rebase interactive
+function rs      { git reset                "$@"    ; return $? ; } # reset
+function soft    { git reset --soft HEAD~$1         ; return $? ; } # reset
+function s       { git status               "$@"    ; return $? ; } # status
+function pull    { git pull && git lfs pull         ; return $? ; } # fetch and rebase (+git lfs files)
+function wipe    { rs . && ch . && clean .          ; return $? ; } # unstage, restore modified, and clean untracked files
 
 function amm
 {
@@ -61,28 +64,37 @@ function amm
 
 }
 
+function assets  { cd $GITDIR/_unity/assets  ; return $?; } 
+function build   { cd $GITDIR/_unity/build   ; return $?; } 
+function project { cd $GITDIR/_unity/project ; return $?; } 
+function scripts { cd $GITDIR/_unity/scripts ; return $?; } 
+
 function unity.init   # copy the files from the unity project repo, then create symbolic links to others
 {
    [[ "$(pwd)" != $GITDIR/* ]] && echo 'A unity project should be in the git folder!' && return $FALSE_
    [[ -d '.git' ]] && echo 'Remove the .git directory before overwriting the state of this repo!' && return $FALSE_
-   
-   cp -r $GITDIR/_unity/project/. .
-   
-   cmd "mklink /J build $WIN_GITDIR\\_unity\\build" || return $?
-   
-   cd Assets
-   cmd "mklink /J Scripts $WIN_GITDIR\\_unity\\scripts" || return $?
-   cd -
-   
-   return $TRUE_
+   cp -r $GITDIR/_unity/project/. . # copy everything from the template
+   unity.mklink
 }
 
-function unity.erase  # erase some of the files copied from the unity project repo
+function unity.mklink
+{
+   cmd "mklink /J build $WIN_GITDIR\\_unity\\build\\xcode"
+   cd Assets
+   cmd "mklink /J Scripts    $WIN_GITDIR\\_unity\\scripts\\src"
+   cmd "mklink /J Sprites    $WIN_GITDIR\\_unity\\assets\\Sprites"
+   cmd "mklink /J Tilesetter $WIN_GITDIR\\_unity\\assets\\Tilesetter"
+   cd - > /dev/null
+}
+
+function unity.reset  # erase some of the files copied from the unity project repo
 {
    [[ ! -d '.git' ]] && echo "Nothing to erase... This isn't a repo!" && return $FALSE_
    rm -rf .git
-   rm -rf Assets/Scripts
-   rm -rf build
+   rm Assets/Scripts
+   rm Assets/Sprites
+   rm Assets/Tilesetter
+   rm build
    rm .gitignore
    rm README.md
 }
