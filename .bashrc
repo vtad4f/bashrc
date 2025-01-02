@@ -84,7 +84,6 @@ function unity.reset  # erase some of the files copied from the unity project re
    [[ ! -d '.git' ]] && echo "Nothing to erase... This isn't a repo!" && return $FALSE_
    rm -rf .git
    rm Assets/Scripts
-   rm build
    rm .gitignore
    rm README.md
 }
