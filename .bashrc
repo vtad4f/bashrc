@@ -74,17 +74,9 @@ function unity.init   # copy the files from the unity project repo, then create 
    [[ "$(pwd)" != $GITDIR/* ]] && echo 'A unity project should be in the git folder!' && return $FALSE_
    [[ -d '.git' ]] && echo 'Remove the .git directory before overwriting the state of this repo!' && return $FALSE_
    cp -r $GITDIR/_unity/project/. . # copy everything from the template
-   unity.mklink
-}
-
-function unity.mklink
-{
-   cmd "mklink /J build $WIN_GITDIR\\_unity\\build\\xcode"
-   cd Assets
-   cmd "mklink /J Scripts    $WIN_GITDIR\\_unity\\scripts\\src"
-   cmd "mklink /J Sprites    $WIN_GITDIR\\_unity\\assets\\Sprites"
-   cmd "mklink /J Tilesetter $WIN_GITDIR\\_unity\\assets\\Tilesetter"
-   cd - > /dev/null
+   pushd Assets > /dev/null
+   cmd "mklink /J Scripts  $WIN_GITDIR\\_unity\\scripts\\src"
+   popd - > /dev/null
 }
 
 function unity.reset  # erase some of the files copied from the unity project repo
@@ -92,8 +84,6 @@ function unity.reset  # erase some of the files copied from the unity project re
    [[ ! -d '.git' ]] && echo "Nothing to erase... This isn't a repo!" && return $FALSE_
    rm -rf .git
    rm Assets/Scripts
-   rm Assets/Sprites
-   rm Assets/Tilesetter
    rm build
    rm .gitignore
    rm README.md
