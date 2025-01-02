@@ -76,7 +76,7 @@ function unity.init   # copy the files from the unity project repo, then create 
    cp -r $GITDIR/_unity/project/. . # copy everything from the template
    pushd Assets > /dev/null
    cmd "mklink /J Scripts  $WIN_GITDIR\\_unity\\scripts\\src"
-   popd - > /dev/null
+   popd > /dev/null
 }
 
 function unity.reset  # erase some of the files copied from the unity project repo
