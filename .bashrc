@@ -20,6 +20,7 @@ FALSE_=3
 
 function _bg     { ("$@" &) ; return $? ; }
 
+function sln     { start *.sln ; return $? ; }
 function ext     { find . -type f -name '*.*' | sed 's|.*\.||' | sort -u ; return $? ; } # list file extensions
 function npp.new { notepad++ -multiInst -noPlugin -nosession "$@"        ; return $? ; } # open temp npp instance
 
@@ -75,7 +76,8 @@ function unity.init   # copy the files from the unity project repo, then create 
    [[ -d '.git' ]] && echo 'Remove the .git directory before overwriting the state of this repo!' && return $FALSE_
    cp -r $GITDIR/_unity/project/. . # copy everything from the template
    pushd Assets > /dev/null
-   cmd "mklink /J Scripts  $WIN_GITDIR\\_unity\\scripts\\src"
+   [[ ! -f 'Scripts' ]] && cmd "mklink /J Scripts  $WIN_GITDIR\\_unity\\scripts\\src"
+   [[ ! -f 'Tools'   ]] && cmd "mklink /J Tools  $WIN_GITDIR\\_unity\\tools\\src"
    popd > /dev/null
 }
 
@@ -84,6 +86,7 @@ function unity.reset  # erase some of the files copied from the unity project re
    [[ ! -d '.git' ]] && echo "Nothing to erase... This isn't a repo!" && return $FALSE_
    rm -rf .git
    rm Assets/Scripts
+   rm Assets/Tools
    rm .gitignore
    rm README.md
 }
