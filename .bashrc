@@ -82,10 +82,10 @@ function unity.init   # copy the files from the unity project repo, then create 
 function unity.mklink
 {
    pushd Assets > /dev/null
-   cmd "mklink /J Editor            $WIN_GITDIR\\_unity\\tools\\src"
    cmd "mklink /J Fonts             $WIN_GITDIR\\_unity\\fonts"
    cmd "mklink /J Scripts           $WIN_GITDIR\\_unity\\scripts\\src"
    cmd "mklink /J Tilesets          $WIN_GITDIR\\_unity\\tilesets"
+   cmd "mklink /J Tools             $WIN_GITDIR\\_unity\\tools\\src"
    cmd "mklink /J UnityNativeShare  $WIN_GITDIR\\UnityNativeShare\\Plugins"
    popd > /dev/null
 }
@@ -94,10 +94,10 @@ function unity.reset  # erase some of the files copied from the unity project re
 {
    [[ ! -d '.git' ]] && echo "Nothing to erase... This isn't a repo!" && return $FALSE_
    rm -rf .git
-   rm Assets/Editor
    rm Assets/Fonts
    rm Assets/Scripts
    rm Assets/Tilesets
+   rm Assets/Tools
    rm Assets/UnityNativeShare
    rm .gitignore
    rm README.md
