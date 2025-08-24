@@ -36,7 +36,7 @@ function bashrc  { npp                   ~/.bashrc ; return $? ; } # open bashrc
 function root    { cd $GITDIR                       ; return $? ; } # navigate to the git dir
 function clone   { git clone $GITHUB/$1.git ${@:2}  ; return $? ; } # clone
 function add     { git add                  "$@"    ; return $? ; } # add
-function bd      { git branch -d             $1     ; return $? ; } # delete local branch
+function bd      { git branch -D             $1     ; return $? ; } # delete local branch
 function bl      { git branch -vv                   ; return $? ; } # list local branches
 function br      { git branch -r                    ; return $? ; } # list remote branches
 function bn      { git branch -m             $1     ; return $? ; } # change branch name
@@ -53,16 +53,17 @@ function rbi     { git rebase -i            "$@"    ; return $? ; } # rebase int
 function rs      { git reset                "$@"    ; return $? ; } # reset
 function soft    { git reset --soft HEAD~$1         ; return $? ; } # reset
 function s       { git status               "$@"    ; return $? ; } # status
+function printc  { git show -s --format='%s'        ; return $? ; } # print the first line of the HEAD commit
 function pull    { git pull && git lfs pull         ; return $? ; } # fetch and rebase (+git lfs files)
 function wipe    { rs . && ch . && clean .          ; return $? ; } # unstage, restore modified, and clean untracked files
 
 function amm
 {
-   local msg_
-   msg_="$1"
-   [ -z "$msg_" ] && msg_=--no-edit
-   git commit --amend "$msg_"
-
+   if [ -z "$1" ]; then
+      git commit --amend --no-edit
+   else
+      git commit --amend -m "$1"
+   fi
 }
 
 function assets  { cd $GITDIR/_unity/assets  ; return $?; } 
@@ -81,8 +82,11 @@ function unity.init   # copy the files from the unity project repo, then create 
 function unity.mklink
 {
    pushd Assets > /dev/null
-   cmd "mklink /J Scripts  $WIN_GITDIR\\_unity\\scripts\\src"
-   cmd "mklink /J Tools  $WIN_GITDIR\\_unity\\tools\\src"
+   cmd "mklink /J Editor            $WIN_GITDIR\\_unity\\tools\\src"
+   cmd "mklink /J Fonts             $WIN_GITDIR\\_unity\\fonts"
+   cmd "mklink /J Scripts           $WIN_GITDIR\\_unity\\scripts\\src"
+   cmd "mklink /J Tilesets          $WIN_GITDIR\\_unity\\tilesets"
+   cmd "mklink /J UnityNativeShare  $WIN_GITDIR\\UnityNativeShare\\Plugins"
    popd > /dev/null
 }
 
@@ -90,11 +94,15 @@ function unity.reset  # erase some of the files copied from the unity project re
 {
    [[ ! -d '.git' ]] && echo "Nothing to erase... This isn't a repo!" && return $FALSE_
    rm -rf .git
+   rm Assets/Editor
+   rm Assets/Fonts
    rm Assets/Scripts
-   rm Assets/Tools
+   rm Assets/Tilesets
+   rm Assets/UnityNativeShare
    rm .gitignore
    rm README.md
 }
+function unity.refresh { unity.reset ; unity.init ; }
 
 function temp         # dump output to a temp file and open it
 {
@@ -133,7 +141,13 @@ function xcode.unique # add the Xcode content that's different between projects
        xcode/Info.plist
 }
 
-if [[ "$(pwd)" == "$HOME" ]]; then
+COMFY=C:/Users/basha/AppData/Local/Programs/@comfyorgcomfyui-electron/resources/ComfyUI/models/checkpoints
+function comfy.mv
+{
+   mv *.safetensors $COMFY
+}
+
+if [[ "$(pwd)" == "$HOME" || "$(pwd)" == "/" ]]; then
    root
 fi
 
